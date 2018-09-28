@@ -196,6 +196,7 @@ for ENC in $ENCLIST; do
 		    echo "!!! Handhsake Found with $COMMAND"
 	  	    echo "-----------------------------------\n"
 		    echo $handshake
+                    echo "RUN: ike-scan -A -P -v -id=$GroupID --trans=$ENC,$HASH,$AUTH,$GROUP $1"
 	  	    echo "-----------------------------------\n"
 	    fi
 
