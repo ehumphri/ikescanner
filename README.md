@@ -9,5 +9,5 @@ Usage: ikescanner.sh <Target> [GroupID] [debug]
 
 # References
 Borrowed a lot from: 
-*https://raw.githubusercontent.com/yg-ht/AssortedPenTestStuff/master/ikeVPNmode.sh
-*NTA Monitor WIki (initial script)
+* https://raw.githubusercontent.com/yg-ht/AssortedPenTestStuff/master/ikeVPNmode.sh
+* NTA Monitor WIki (initial script)
