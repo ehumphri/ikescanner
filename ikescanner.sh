@@ -66,7 +66,7 @@ for ENC in $ENCLIST; do
 
 	    if [ "$HASH" = 1 ]
 	    then
-		    HASHNAME="HMAC-MD5"
+		    HASHNAME="HMAC-MD5 - Weak"
 	    elif [ "$HASH" = 2 ]
 	    then
 		    HASHNAME="HMAC-SHA"
@@ -100,7 +100,7 @@ for ENC in $ENCLIST; do
 		    ENCNAME="IDEA - WEAK"
 	    elif [ "$ENC" = 3 ]
 	    then
-		    ENCNAME="Blowfish"
+		    ENCNAME="Blowfish - WEAK"
 	    elif [ "$ENC" = 4 ]
 	    then
 		    ENCNAME="RC5-R16-B64"
@@ -109,7 +109,7 @@ for ENC in $ENCLIST; do
 		    ENCNAME="3DES - WEAK"
 	    elif [ "$ENC" = 6 ]
 	    then
-		    ENCNAME="CAST"
+		    ENCNAME="CAST - WEAK"
 	    elif [ "$ENC" = 7 ]
 	    then
 		    ENCNAME="AES"
@@ -137,31 +137,34 @@ for ENC in $ENCLIST; do
 
 	    if [ "$GROUP" = 1 ]
             then
-		    GROUPNAME="1 - 768-bit MODP group - WEAK"
+		    GROUPNAME="1 - 768-bit MODP group - RFC2409 - WEAK"
 	    elif [ "$GROUP" = 2 ]
 	    then
-		    GROUPNAME="2 - 1024-bit MODP group - WEAK"
+		    GROUPNAME="2 - 1024-bit MODP group - RFC2409 - WEAK"
 	    elif [ "$GROUP" = 3 ]
 	    then
-		    GROUPNAME="3 - EC2N group on GP[2^155]"
+		    GROUPNAME="3 - EC2N group on GP[2^155] - RFC2409"
 	    elif [ "$GROUP" = 4 ]
 	    then
-		    GROUPNAME="4 - EC2N group on GP[2^185]"
+		    GROUPNAME="4 - EC2N group on GP[2^185] - RFC2409"
 	    elif [ "$GROUP" = 5 ]
 	    then
-		    GROUPNAME="5 - 1536-bit MODP group"
+		    GROUPNAME="5 - 1536-bit MODP group - RFC3526"
 	    elif [ "$GROUP" = 14 ]
 	    then
-		    GROUPNAME="14 - 2048-bit group"
+		    GROUPNAME="14 - 2048-bit MODP group - RFC3526"
 	    elif [ "$GROUP" = 15 ]
 	    then
-		    GROUPNAME="15 - 3072-bit group"
+		    GROUPNAME="15 - 3072-bit MODP group - RFC3526"
+	    elif [ "$GROUP" = 16 ]
+	    then
+		    GROUPNAME="16 - 4096-bit MODP group - RFC3526"
 	    elif [ "$GROUP" = 19 ]
 	    then
-		    GROUPNAME="19 - 256-bit elliptic curve group"
+		    GROUPNAME="19 - 256-bit random elliptic curve group - RFC5903"
 	    elif [ "$GROUP" = 20 ]
 	    then
-		    GROUPNAME="20 - 384-bit elliptic curve group"
+		    GROUPNAME="20 - 384-bit random elliptic curve group - RFC5903"
             else
 		    GROUPNAME="Unknown"
 	    fi
@@ -180,10 +183,11 @@ for ENC in $ENCLIST; do
 
 	    if [ $DEBUG ]; then
 			echo "-------------------"
+			echo $ikescan
        	    fi 
 
 
-            handshake=`echo $ikescan | grep -v "1 returned notify"`
+            handshake=`echo $ikescan | grep -v "1 returned notify" | grep -v "0 returned notify"`
 	    if [ -n "$handshake" ]; then
 		    echo "DH Group: $GROUPNAME"
 		    echo "Encryption: $ENCNAME"
@@ -191,6 +195,29 @@ for ENC in $ENCLIST; do
 		    echo "Auth Type: $AUTHNAME"
 		    echo "!!! Handhsake Found with $COMMAND"
 	  	    echo "-----------------------------------\n"
+		    echo $handshake
+	  	    echo "-----------------------------------\n"
+	    fi
+
+	    notifymessage14=`echo $ikescan | grep "Notify message 14"`
+	    if [ -n "$notifymessage14" ]; then
+	     if [ $DEBUG ]; then
+		    echo "Notify Message 14 Returned - ERROR: NO-PROPOSAL-CHOSEN"
+	     fi
+	    fi
+
+	    notifymessage24=`echo $ikescan | grep "Notify message 24"`
+	    if [ -n "$notifymessage24" ]; then
+	     if [ $DEBUG ]; then
+		    echo "Notify Message 24 Returned - ERROR: AUTHENTICATION-FAILED"
+	     fi
+	    fi
+
+	    notifymessage28=`echo $ikescan | grep "Notify message 28"`
+	    if [ -n "$notifymessage28" ]; then
+	     if [ $DEBUG ]; then
+		    echo "Notify Message 28 Returned - ERROR: CERTIFICATE-UNAVAILABLE"
+	     fi
 	    fi
 
          done
